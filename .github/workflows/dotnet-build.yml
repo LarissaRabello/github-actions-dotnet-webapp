@@ -1,0 +1,34 @@
+name: .NET Build Workflow
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 * * * *' # Executa a cada hora
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Instalar o .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # ou a versão que você usou localmente
+
+    - name: Restaurar dependências
+      run: dotnet restore **/*.csproj
+
+    - name: Compilar a aplicação
+      run: dotnet build **/*.csproj --no-restore
+
+    - name: Rodar aplicação (script personalizado)
+      run: |
+        echo "Iniciando o webapp para testes rápidos..."
+        dotnet run --project **/*.csproj &
+        sleep 10
+        echo "Webapp rodando!"
